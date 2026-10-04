@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TelBase – Student Governance Platform</title>
+  <link rel="icon" type="image/png" href="Foto/Group 2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700;800;900&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:     #C0392B;
+      --red-mid: #E74C3C;
+      --red-lt:  #FDECEA;
+      --red-xs:  #FDF6F6;
+      --cream:   #FFFFFF;
+      --dark:    #111111;
+      --muted:   #6B7280;
+      --border:  #E5E7EB;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ══ NAV ══ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; }
+    .nav-logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-logo-text strong { display: block; font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--dark); }
+    .nav-logo-text span { font-size: .65rem; color: var(--muted); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; font-size: .875rem; font-weight: 500;
+      color: var(--muted); transition: color .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--dark); }
+    .nav-login {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--dark); color: #fff;
+      border: none; border-radius: 6px;
+      padding: .45rem 1.1rem; font-size: .85rem; font-weight: 500;
+      cursor: pointer; transition: background .2s; text-decoration: none;
+    }
+    .nav-login:hover { background: #333; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); border-radius: 2px; transition: .3s; }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 4rem; padding: 80px 5vw 60px;
+      position: relative;
+    }
+    .hero::after { display: none; }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.2; font-weight: 700; color: var(--dark);
+      margin-bottom: 1rem; animation: fadeUp .6s .1s ease both;
+    }
+    .hero-title .accent { color: var(--red); }
+    .hero-sub {
+      font-size: .95rem; color: var(--muted); line-height: 1.7;
+      font-weight: 400; max-width: 420px;
+      margin-bottom: 2rem; animation: fadeUp .6s .2s ease both;
+    }
+    .hero-actions { display: flex; gap: .75rem; flex-wrap: wrap; animation: fadeUp .6s .3s ease both; }
+    .btn-primary {
+      background: var(--red); color: #fff; border: none; border-radius: 6px;
+      padding: .65rem 1.6rem; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: background .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: var(--red-mid); }
+    .btn-outline {
+      background: transparent; color: var(--dark); border: 1px solid var(--border);
+      border-radius: 6px; padding: .65rem 1.6rem; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: border-color .2s, color .2s;
+      text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .btn-outline:hover { border-color: var(--dark); }
+    .dot { display: none; }
+    .hero-visual { position: relative; z-index: 1; animation: fadeUp .7s .2s ease both; }
+    .img-cluster { position: relative; width: 100%; aspect-ratio: 1/.9; }
+    .img-card {
+      position: absolute; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.1); border: 2px solid #fff;
+      transition: transform .3s ease;
+    }
+    .img-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-card:hover { transform: scale(1.02) rotate(0deg) !important; z-index: 5; }
+    .img-card-1 { width: 60%; top: 0; right: 0; aspect-ratio: 4/3; transform: rotate(1.5deg); }
+    .img-card-2 { width: 52%; top: 30%; left: 0; aspect-ratio: 4/3; transform: rotate(-2deg); }
+    .img-card-3 { width: 55%; bottom: 0; right: 8%; aspect-ratio: 4/3; transform: rotate(1deg); }
+    .img-ring {
+      position: absolute; top: -5%; right: -5%; width: 40%; aspect-ratio: 1;
+      border: 1px solid var(--border); border-radius: 50%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ══ STATS ══ */
+    .stats-bar {
+      background: var(--dark); padding: 1.5rem 5vw;
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .stat-item { text-align: center; color: #fff; }
+    .stat-num { font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 700; display: block; }
+    .stat-label { font-size: .75rem; color: #9CA3AF; letter-spacing: .05em; text-transform: uppercase; }
+
+    /* ══ SECTIONS ══ */
+    .section { padding: 5rem 5vw; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .7rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--red); margin-bottom: .6rem;
+    }
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600; line-height: 1.25; margin-bottom: 1rem; color: var(--dark);
+    }
+    .section-body { color: var(--muted); line-height: 1.75; max-width: 540px; font-size: .9rem; }
+
+    /* ══ ABOUT ══ */
+    #about {
+      position: relative;
+      background: var(--red-xs);
+    }
+    #about::before { display: none; }
+    #about::after { display: none; }
+    #about .about-grid { position: relative; z-index: 1; }
+    .about-blob-mid { display: none; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-img { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,.08); position: relative; }
+    .about-img img { width: 100%; display: block; }
+    .about-img-badge {
+      position: absolute; bottom: 16px; left: 16px;
+      background: var(--dark); color: #fff; border-radius: 6px;
+      padding: .5rem 1rem; font-weight: 500; font-size: .8rem;
+    }
+
+    .img-card-about img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-card-about:hover { transform: scale(1.02) rotate(0deg) !important; z-index: 5; }
+    .img-card-about-1 { width: 60%; top: 0; left: 0%; aspect-ratio: 4/3; transform: rotate(1.5deg); }
+    .img-card-about-2 { width: 60%; top: 5%; right: -5%; aspect-ratio: 4/3; transform: rotate(-2deg); }
+    .img-card-about-3 { width: 60%; top: 90%; right: 0; aspect-ratio: 4/3; transform: rotate(-2deg); }
+    .img-card-about-4 { width: 60%; top: 40%; left: 10%; aspect-ratio: 4/3; transform: rotate(2deg); }
+    .img-card-about-5 { width: 60%; top: 50%; right: -10%; aspect-ratio: 4/3; transform: rotate(-2deg); }
+    .img-card-about-6 { width: 60%; top: 80%; left: 0%; aspect-ratio: 4/3; transform: rotate(2deg); }
+    .img-cluster-about { position: relative; width: 55%; aspect-ratio: 1/.9; align-items: top; }
+    .img-card-about {
+      position: absolute; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1); border: 2px solid #fff;
+      transition: transform .3s ease;
+    }
+    .hero-visual-about {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      height: 100%;
+    }
+
+    .features { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.8rem; }
+    .feature-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.25rem; transition: box-shadow .2s;
+    }
+    .feature-card::before { display: none; }
+    .feature-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+    .feature-icon { width: 38px; height: 38px; border-radius: 8px; background: var(--red-lt); display: grid; place-items: center; margin-bottom: .85rem; }
+    .feature-icon svg { width: 18px; height: 18px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-card h4 { font-size: .875rem; font-weight: 600; margin-bottom: .3rem; color: var(--dark); }
+    .feature-card p { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+    /* ══ ORGANISASI CAROUSEL ══ */
+    .org-section { background: #fff; overflow: hidden; border-top: 1px solid var(--border); }
+
+    .org-section-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    .org-section-header .text-block { flex: 1; min-width: 200px; }
+
+    .carousel-controls { display: flex; gap: .5rem; align-items: center; }
+    .carousel-btn {
+      width: 36px; height: 36px; border-radius: 6px;
+      border: 1px solid var(--border); background: #fff;
+      display: grid; place-items: center; cursor: pointer;
+      transition: background .2s, border-color .2s;
+      color: var(--dark); flex-shrink: 0;
+    }
+    .carousel-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .carousel-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .carousel-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .carousel-wrapper { position: relative; }
+    .carousel-wrapper::after {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 60px;
+      background: linear-gradient(to right, transparent, #fff);
+      pointer-events: none; z-index: 2;
+    }
+    .carousel-wrapper::before {
+      content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 60px;
+      background: linear-gradient(to left, transparent, #fff);
+      pointer-events: none; z-index: 2;
+    }
+
+    .carousel-track {
+      display: flex; gap: 1rem;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+      padding-bottom: 8px; padding-top: 4px; padding-left: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .org-card-new {
+      flex: 0 0 210px;
+      scroll-snap-align: start;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--dark);
+      display: flex; flex-direction: column;
+      transition: box-shadow .2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .org-card-new:hover { box-shadow: 0 6px 24px rgba(0,0,0,.09); }
+
+    .org-card-photo {
+      width: 100%; aspect-ratio: 4/3; overflow: hidden;
+      position: relative; background: var(--red-lt);
+      flex-shrink: 0;
+    }
+    .org-card-photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .35s ease;
+    }
+    .org-card-new:hover .org-card-photo img { transform: scale(1.04); }
+
+    .org-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .5rem;
+    }
+    .org-photo-placeholder .org-abbr {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--red); opacity: .3;
+    }
+
+    .org-card-badge {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(0,0,0,.55); color: #fff;
+      font-size: .68rem; font-weight: 600; letter-spacing: .03em;
+      border-radius: 4px; padding: .15rem .45rem;
+    }
+
+    .org-card-arrow {
+      position: absolute; top: 8px; right: 8px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,.9);
+      display: grid; place-items: center;
+      opacity: 0; transition: opacity .2s;
+    }
+    .org-card-arrow svg { width: 12px; height: 12px; stroke: var(--dark); fill: none; stroke-width: 2; }
+    .org-card-new:hover .org-card-arrow { opacity: 1; }
+
+    .org-card-body { padding: .9rem 1rem 1rem; flex: 1; display: flex; flex-direction: column; gap: .25rem; }
+    .org-card-body h5 { font-size: .9rem; font-weight: 600; color: var(--dark); line-height: 1.2; }
+    .org-card-body .org-card-sub { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+    .org-card-body .org-card-link {
+      margin-top: auto; padding-top: .6rem;
+      font-size: .73rem; font-weight: 600; color: var(--red);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .org-card-link svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: transform .2s; }
+    .org-card-new:hover .org-card-link svg { transform: translateX(2px); }
+
+    .carousel-dots {
+      display: flex; justify-content: center; gap: .4rem; margin-top: 1.2rem;
+    }
+    .carousel-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border); transition: background .25s, width .25s;
+      cursor: pointer; border: none; padding: 0;
+    }
+    .carousel-dot.active { background: var(--dark); width: 18px; border-radius: 3px; }
+
+    /* ══ CTA ══ */
+    .cta-section {
+      background: var(--dark); padding: 5rem 5vw; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before { display: none; }
+    .cta-section .section-label { color: #9CA3AF; }
+    .cta-section .section-title { color: #fff; }
+    .cta-section .section-body { color: #6B7280; margin: 0 auto 2rem; }
+    .cta-buttons { display: flex; justify-content: center; gap: .75rem; flex-wrap: wrap; }
+    .btn-white {
+      background: #fff; color: var(--dark); border: none; border-radius: 6px;
+      padding: .7rem 1.8rem; font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: background .2s; text-decoration: none;
+    }
+    .btn-white:hover { background: #F3F4F6; }
+    .btn-ghost {
+      background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.25);
+      border-radius: 6px; padding: .7rem 1.8rem; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: border-color .2s; text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.6); }
+
+    /* ══ FOOTER ══ */
+    footer { background: #111; padding: 3rem 5vw 1.5rem; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 3rem; }
+    .footer-brand strong { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: #fff; display: block; margin-bottom: .5rem; font-weight: 600; }
+    .footer-brand p { font-size: .82rem; color: #6B7280; line-height: 1.65; max-width: 240px; }
+    .footer-col h6 { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; margin-bottom: .9rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: .5rem; }
+    .footer-col ul li a { text-decoration: none; font-size: .83rem; color: #6B7280; transition: color .2s; }
+    .footer-col ul li a:hover { color: #D1D5DB; }
+    .footer-bottom { background: #111; border-top: 1px solid #222; padding: 1rem 5vw; text-align: center; font-size: .75rem; color: #4B5563; }
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 80px; text-align: center; }
+      .hero-content { order: 2; }
+      .hero-visual { order: 1; max-width: 400px; margin: 0 auto; width: 100%; }
+      .img-cluster { aspect-ratio: unset; height: 280px; }
+      .hero-actions { justify-content: center; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .about-grid { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr 1fr; }
+      footer { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1 / -1; }
+      .org-card-new { flex: 0 0 185px; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links, .nav-login { display: none; }
+      .hamburger { display: flex; }
+      .features { grid-template-columns: 1fr; }
+      .stats-bar { gap: 1rem; }
+      footer { grid-template-columns: 1fr; gap: 2rem; }
+      .hero { grid-template-columns: 1fr; padding-top: 80px; gap: 1.5rem; text-align: center; }
+      .hero-content { order: 2; }
+      .hero-visual { order: 1; width: 100%; max-width: 100%; padding: 0 1rem; }
+      .img-cluster { position: relative; width: 100%; height: 230px; aspect-ratio: unset; }
+      .img-card-1 { width: 55%; top: 0; right: 2%; left: auto; }
+      .img-card-2 { width: 50%; top: 25%; left: 2%; right: auto; }
+      .img-card-3 { width: 52%; bottom: 0; right: 10%; left: auto; }
+      .img-ring { display: none; }
+      .mobile-menu {
+        position: fixed; top: 60px; left: 0; right: 0;
+        background: rgba(255,255,255,.98); backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 1.25rem 5vw; display: none; flex-direction: column; gap: 1rem; z-index: 99;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { text-decoration: none; font-size: .95rem; font-weight: 500; color: var(--dark); padding: .35rem 0; border-bottom: 1px solid var(--border); }
+      .mobile-menu .nav-login { display: flex; align-self: flex-start; }
+      .org-section-header { flex-direction: column; align-items: flex-start; }
+      .org-card-new { flex: 0 0 170px; }
+      .carousel-wrapper::after { width: 30px; }
+    }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <img src="Foto/Group 2.webp" alt="TelBase Logo">
+    </div>
+    <div class="nav-logo-text">
+      <strong>TelBase</strong>
+      <span>Student Governance Platform</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="Index.html" class="active">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#organisation">Organization</a></li>
+    <li><a href="#news">News</a></li>
+  </ul>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#">Home</a>
+  <a href="#about">About</a>
+  <a href="#organisation">Organization</a>
+  <a href="#news">News</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="dot dot-1"></div>
+  <div class="dot dot-2"></div>
+  <div class="dot dot-3"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Jelajahi <span class="accent">kreatifitas</span><br>
+      dan <span class="accent">Inovasi</span><br>
+      di Primaseru!
+    </h1>
+    <p class="hero-sub">Becoming a creative and productive student</p>
+    <div class="hero-actions">
+      <a href="https://kotastel.netlify.app/" class="btn-primary">
+        KOSTATEL
+      </a>
+      <a href="#about" class="btn-outline">Eksplorasi TelBase</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="img-cluster">
+      <div class="img-ring"></div>
+      <div class="img-card img-card-1"><div style="width:100%;height:100%;"><img src="Foto/Fto1.webp" alt="Foto 1"></div></div>
+      <div class="img-card img-card-2"><div style="width:100%;height:100%;"><img src="Foto/Fto2.webp" alt="Foto 2"></div></div>
+      <div class="img-card img-card-3"><div style="width:100%;height:100%;"><img src="Foto/Fto3.webp" alt="Foto 3"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num">5+</span><span class="stat-label">Organisasi Aktif</span></div>
+  <div class="stat-item"><span class="stat-num">40+</span><span class="stat-label">Anggota Terdaftar</span></div>
+  <div class="stat-item"><span class="stat-num">256</span><span class="stat-label">Aspirasi Diterima</span></div>
+  <div class="stat-item"><span class="stat-num">80+</span><span class="stat-label">Kegiatan / Tahun</span></div>
+  <div class="stat-item"><span class="stat-num">13</span><span class="stat-label">Tahun Berdiri</span></div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="about-blob-mid"></div>
+  <div class="about-grid">
+    <div class="hero-visual-about">
+    <div class="img-cluster-about">
+      <div class="img-card-about img-card-about-1"><div style="width:100%;height:100%;"><img src="Foto-About/Foto1.jpg" alt="Foto 1"></div></div>
+      <div class="img-card-about img-card-about-2"><div style="width:100%;height:100%;"><img src="Foto-About/Foto2.jpg" alt="Foto 2"></div></div>
+      <div class="img-card-about img-card-about-4"><div style="width:100%;height:100%;"><img src="Foto-About/Foto3.JPG" alt="Foto 1"></div></div>
+      <div class="img-card-about img-card-about-5"><div style="width:100%;height:100%;"><img src="Foto-About/Foto4.JPG" alt="Foto 2"></div></div>
+      <div class="img-card-about img-card-about-6"><div style="width:100%;height:100%;"><img src="Foto-About/Foto5.JPG" alt="Foto 3"></div></div>
+      <div class="img-card-about img-card-about-3"><div style="width:100%;height:100%;"><img src="Foto-About/Foto6.jpg" alt="Foto 3"></div></div>
+    </div>
+    </div>
+    <div class="reveal">
+      <div class="section-label">Tentang Kami</div>
+      <h2 class="section-title">Platform Digital<br>Tata Kelola Siswa</h2>
+      <p class="section-body">
+        TelBase adalah platform resmi Student Governance di SMK Telkom Bandung tempat OSIS, MPK, dan seluruh organisasi kesiswaan berkolaborasi, berbagi informasi, dan membangun kreativitas bersama.
+      </p>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <h4>Transparan</h4>
+          <p>Semua informasi organisasi terbuka dan mudah diakses seluruh siswa.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+          <h4>Inovatif</h4>
+          <p>Mendorong siswa untuk berpikir kreatif dan menghasilkan karya nyata.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h4>Kolaboratif</h4>
+          <p>Menghubungkan antar-organisasi untuk bersinergi mencapai tujuan bersama.</p>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- ══ ORGANISASI CAROUSEL ══ -->
+<section class="section org-section" id="organisation">
+  <div class="org-section-header reveal">
+    <div class="text-block">
+      <div class="section-label">Organisasi</div>
+      <h2 class="section-title">Unit Kegiatan Siswa</h2>
+      <p class="section-body">Bergabung dan berkembang bersama Ekstrakurikuler &amp; Organisasi aktif di SMK Telkom Bandung.</p>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="prevBtn" aria-label="Sebelumnya">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="carousel-btn" id="nextBtn" aria-label="Berikutnya">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="carousel-wrapper reveal">
+    <div class="carousel-track" id="carouselTrack">
+
+      <!-- OSIS -->
+      <a href="osis.html" class="org-card-new">
+        <div class="org-card-photo">
+          <!-- Ganti src dengan foto OSIS kamu -->
+          <img src="Foto/Primfest.jpeg" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">OSIS</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>OSIS</h5>
+          <span class="org-card-sub">Organisasi Siswa Intra Sekolah — penggerak utama kegiatan kesiswaan.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <!-- MPK -->
+      <a href="mpk.html" class="org-card-new">
+        <div class="org-card-photo">
+         <img src="Foto/Fto1.JPG" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">MPK</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>MPK</h5>
+          <span class="org-card-sub">Majelis Permusyawaratan Kelas — mengawal kebijakan dan aspirasi siswa.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <!-- Paskibra -->
+      <a href="mpk.html" class="org-card-new">
+        <div class="org-card-photo">
+         <img src="Foto/Fto1.JPG" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">Paskibra</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>Paskibra</h5>
+          <span class="org-card-sub">Paskibra — mengawal kebijakan dan aspirasi siswa.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <!-- PMR -->
+      <a href="mpk.html" class="org-card-new">
+        <div class="org-card-photo">
+         <img src="Foto/Fto1.JPG" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">MPK</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>MPK</h5>
+          <span class="org-card-sub">Majelis Permusyawaratan Kelas — mengawal kebijakan dan aspirasi siswa.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <!-- Rohis -->
+      <a href="mpk.html" class="org-card-new">
+        <div class="org-card-photo">
+         <img src="Foto/Fto1.JPG" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">MPK</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>MPK</h5>
+          <span class="org-card-sub">Majelis Permusyawaratan Kelas — mengawal kebijakan dan aspirasi siswa.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <!-- Pramuka -->
+      <a href="mpk.html" class="org-card-new">
+        <div class="org-card-photo">
+         <img src="Foto/Fto1.JPG" alt="OSIS" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <span class="org-card-badge">MPK</span>
+          <div class="org-card-arrow">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="org-card-body">
+          <h5>MPK</h5>
+          <span class="org-card-sub">Majelis Permusyawaratan Kelas — mengawal kebijakan dan aspirasi siswa.</span>
+          <span class="org-card-link">Lihat Detail <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+    </div><!-- end track -->
+  </div><!-- end wrapper -->
+
+  <!-- dot indicators -->
+  <div class="carousel-dots" id="carouselDots"></div>
+
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-label">Bergabung Sekarang</div>
+  <h2 class="section-title">Jadilah Bagian dari<br>Kami</h2>
+  <p class="section-body">Daftarkan dirimu, eksplorasi organisasi, dan wujudkan potensimu bersama ribuan siswa kreatif.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn-white">Eksplorasi TelBase</a>
+    <a href="#" class="btn-ghost">Tentang KOSTATEL</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <strong>TelBase</strong>
+    <p>Platform tata kelola siswa digital untuk OSIS, MPK, dan seluruh organisasi kesiswaan di SMK Telkom Bandung.</p>
+  </div>
+  <div class="footer-col">
+    <h6>Navigasi</h6>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#organisation">Organization</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h6>Kontak</h6>
+    <ul>
+      <li><a href="#">mpk@smktelkom-bdg.sch.id</a></li>
+      <li><a href="#">osis@smktelkom-bdg.sch.id</a></li>
+      <li><a href="https://www.instagram.com/osis.smktelbdg">Instagram</a></li>
+      <li><a href="#">WhatsApp</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">© 2026 TelBaseDev. All rights reserved.</div>
+
+<script>
+  // ── Hamburger ──
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+
+  // ── Reveal on scroll ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+  // ── Nav active ──
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    document.querySelectorAll('section[id]').forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur || (cur === '' && a.getAttribute('href') === '#'));
+    });
+  });
+
+  // ── Carousel ──
+  const track   = document.getElementById('carouselTrack');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsEl  = document.getElementById('carouselDots');
+  const cards   = track.querySelectorAll('.org-card-new');
+  const GAP     = 19; // matches 1.2rem gap ≈ 19px
+
+  // build dots
+  cards.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', `Slide ${i+1}`);
+    d.addEventListener('click', () => scrollToCard(i));
+    dotsEl.appendChild(d);
+  });
+  const dots = dotsEl.querySelectorAll('.carousel-dot');
+
+  function getCardWidth() {
+    return cards[0].offsetWidth + GAP;
+  }
+
+  function scrollToCard(idx) {
+    track.scrollTo({ left: idx * getCardWidth(), behavior: 'smooth' });
+  }
+
+  function updateUI() {
+    const w = getCardWidth();
+    const cur = Math.round(track.scrollLeft / w);
+    dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+    prevBtn.disabled = track.scrollLeft < 4;
+    nextBtn.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+  }
+
+  prevBtn.addEventListener('click', () => {
+    track.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+  });
+  nextBtn.addEventListener('click', () => {
+    track.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+  });
+
+  track.addEventListener('scroll', updateUI, { passive: true });
+  updateUI();
+
+  // touch swipe
+  let startX = 0;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) nextBtn.click();
+      else prevBtn.click();
+    }
+  }, { passive: true });
+
+  // ── Mengubah Scroll Mouse Vertikal menjadi Horizontal ──
+  track.addEventListener('wheel', (e) => {
+    // Mencegah halaman ikut ke-scroll ke bawah/atas
+    e.preventDefault(); 
+    // Menggeser carousel ke kiri/kanan sesuai arah scroll mouse
+    track.scrollBy({
+      left: e.deltaY,
+      behavior: 'auto' // Gunakan 'auto' agar pergerakannya mengikuti kecepatan tangan
+    });
+  }, { passive: false });
+</script>
+</body>
+</html>
